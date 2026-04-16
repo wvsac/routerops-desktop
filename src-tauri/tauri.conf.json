@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "routerops-desktop",
+  "productName": "RouterOps Control",
   "version": "0.1.0",
   "identifier": "com.wvsac.routerops-desktop",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "routerops-desktop",
+        "title": "RouterOps Control",
         "width": 800,
         "height": 600
       }
