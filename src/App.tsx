@@ -88,7 +88,15 @@ function RouterOpsApp() {
           />
         );
       case "platforms":
-        return <PlatformsPage platforms={state.platforms} />;
+        return (
+          <PlatformsPage
+            platforms={state.platforms}
+            logExportBusyId={state.logExportBusyId}
+            lastLogExport={state.lastLogExport}
+            onExportLogs={state.exportLogs}
+            onDismissLogExport={state.dismissLogExport}
+          />
+        );
       case "jobs":
         return <JobsPage jobs={state.jobs} logs={state.logs} onClearCompleted={state.clearCompletedJobs} />;
       case "settings":

@@ -12,10 +12,12 @@ import type {
   JobLogEntry,
   RouterPlatform,
 } from "@/domain/models";
-import { MockAliasService, MockFlashService, MockJobLogService } from "@/services/mock-services";
+import type { LogExportResult } from "@/domain/models";
+import { MockAliasService, MockFlashService, MockJobLogService, MockLogExportService } from "@/services/mock-services";
 
 const flashService = new MockFlashService();
 const aliasService = new MockAliasService();
+const logExportService = new MockLogExportService();
 
 const createPlanInput = (
   firmwareHash: string,
@@ -34,6 +36,8 @@ export function useRouterOpsState() {
   const [flashBusy, setFlashBusy] = useState(false);
   const [aliasBusyId, setAliasBusyId] = useState<string | null>(null);
   const [deployAliasesBusy, setDeployAliasesBusy] = useState(false);
+  const [logExportBusyId, setLogExportBusyId] = useState<string | null>(null);
+  const [lastLogExport, setLastLogExport] = useState<LogExportResult | null>(null);
 
   const jobLogService = useMemo(() => new MockJobLogService(logs), [logs]);
 
@@ -193,6 +197,44 @@ export function useRouterOpsState() {
     }
   };
 
+  const exportLogs = async (platformId: string) => {
+    const platform = platforms.find((item) => item.id === platformId);
+    if (!platform) return;
+    setLogExportBusyId(platformId);
+    try {
+      const result = await logExportService.exportLogs(platform);
+      setLastLogExport(result);
+
+      const logEntry: JobLogEntry = {
+        id: `log-${Math.floor(Math.random() * 100000)}`,
+        jobId: `log-export-${platform.id}`,
+        timestamp: result.exportedAt,
+        level: result.status === "success" ? "info" : "error",
+        message: `Log export from ${platform.tag} (${platform.logPath})`,
+        command: `ssh root@${platform.defaultIp} "cat ${platform.logPath}"`,
+        output: result.status === "success"
+          ? `Exported ${result.byteSize} bytes from ${result.logPath}`
+          : "Failed to export logs from device.",
+      };
+      setLogs((prev) => [logEntry, ...prev]);
+      setActivity((prev) => [
+        {
+          id: `act-${Math.floor(Math.random() * 100000)}`,
+          timestamp: result.exportedAt,
+          platformId: platform.id,
+          action: "Logs exported",
+          detail: `${result.byteSize} bytes pulled from ${platform.logPath} on ${platform.tag}.`,
+        },
+        ...prev,
+      ]);
+      toast.success(`Logs exported from ${platform.tag}`);
+    } catch {
+      toast.error(`Failed to export logs from ${platform.tag}`);
+    } finally {
+      setLogExportBusyId(null);
+    }
+  };
+
   const updateSettings = (partial: Partial<AppSettings>) => {
     setSettings((prev) => ({ ...prev, ...partial }));
     toast.success("Settings updated");
@@ -221,6 +263,10 @@ export function useRouterOpsState() {
     deleteAlias,
     runAlias,
     deployAliasesToRouter,
+    exportLogs,
+    logExportBusyId,
+    lastLogExport,
+    dismissLogExport: () => setLastLogExport(null),
     updateSettings,
     clearCompletedJobs,
     getJobLogs: (jobId: string) => jobLogService.getByJobId(jobId),

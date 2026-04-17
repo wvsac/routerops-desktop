@@ -16,6 +16,7 @@ export interface RouterPlatform {
   destinationPath: string;
   updateMethod: UpdateMethod;
   updateCommand: string;
+  logPath: string;
   preFlashCommands?: string[];
   postFlashCommands?: string[];
   notes?: string;
@@ -110,4 +111,13 @@ export interface AliasDeploymentResult {
   scriptPreview: string;
   output: string;
   timestamp: string;
+}
+
+export interface LogExportResult {
+  platformId: string;
+  status: "success" | "failed";
+  logPath: string;
+  content: string;
+  exportedAt: string;
+  byteSize: number;
 }

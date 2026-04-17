@@ -7,6 +7,7 @@ import type {
   FlashPlan,
   FlashRequestInput,
   JobLogEntry,
+  LogExportResult,
   RouterPlatform,
 } from "@/domain/models";
 
@@ -22,6 +23,10 @@ export interface AliasService {
 
 export interface JobLogService {
   getByJobId(jobId: string): JobLogEntry[];
+}
+
+export interface LogExportService {
+  exportLogs(platform: RouterPlatform): Promise<LogExportResult>;
 }
 
 // TODO: Replace mock services with Tauri command invocations or Python sidecar bridge.

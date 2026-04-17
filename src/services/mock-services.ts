@@ -7,9 +7,10 @@ import type {
   FlashJob,
   FlashRequestInput,
   JobLogEntry,
+  LogExportResult,
   RouterPlatform,
 } from "@/domain/models";
-import type { AliasService, FlashService, JobLogService } from "@/services/contracts";
+import type { AliasService, FlashService, JobLogService, LogExportService } from "@/services/contracts";
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -79,5 +80,36 @@ export class MockJobLogService implements JobLogService {
     return this.logs
       .filter((log) => log.jobId === jobId)
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  }
+}
+
+const MOCK_SYSLOG = `Jan  1 00:00:01 router syslogd started: BusyBox v1.36.1
+Jan  1 00:00:01 router kernel: [    0.000000] Linux version 5.15.137
+Jan  1 00:00:02 router kernel: [    1.241023] mtd: partition "firmware" created
+Jan  1 00:00:03 router netifd: Interface 'loopback' is enabled
+Jan  1 00:00:03 router netifd: Interface 'lan' is enabled
+Jan  1 00:00:04 router hostapd: wlan0: interface state UNINITIALIZED->ENABLED
+Jan  1 00:00:04 router hostapd: wlan0: AP-ENABLED
+Jan  1 00:00:05 router dnsmasq[1423]: started, DNSSEC, DNS-over-TLS
+Jan  1 00:00:05 router dnsmasq[1423]: read /etc/hosts - 3 names
+Jan  1 00:00:06 router dropbear[1501]: Running in background
+Jan  1 00:00:08 router uhttpd[1520]: listening on 0.0.0.0:80
+Jan  1 00:00:12 router odhcpd[1445]: router advertisement sent on br-lan
+Jan  1 00:00:15 router kernel: [   14.832100] br-lan: port 1(eth0.1) entered forwarding state
+Jan  1 00:00:18 router hostapd: wlan0: STA 4a:3b:22:ff:ee:01 IEEE 802.11: authenticated
+Jan  1 00:00:19 router hostapd: wlan0: STA 4a:3b:22:ff:ee:01 IEEE 802.11: associated`;
+
+export class MockLogExportService implements LogExportService {
+  async exportLogs(platform: RouterPlatform): Promise<LogExportResult> {
+    await wait(800);
+    const content = MOCK_SYSLOG;
+    return {
+      platformId: platform.id,
+      status: "success",
+      logPath: platform.logPath,
+      content,
+      exportedAt: new Date().toISOString(),
+      byteSize: new TextEncoder().encode(content).length,
+    };
   }
 }
