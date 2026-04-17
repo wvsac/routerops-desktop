@@ -1,6 +1,7 @@
 import { CircleDot } from "lucide-react";
 
 import { appBrand, navOrder, sectionMeta, type AppSection } from "@/app/sections";
+import { NetInterfaces } from "@/components/app/net-interfaces";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
@@ -50,9 +51,12 @@ export function Sidebar({
           );
         })}
       </div>
-      <div className="mt-auto rounded-xl border border-border/80 bg-muted/30 p-3">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Workflow</p>
-        <p className="mt-1 text-sm text-foreground">Flash routers, run aliases, inspect logs.</p>
+      <div className="mt-auto space-y-3">
+        <NetInterfaces />
+        <div className="rounded-xl border border-border/80 bg-muted/30 p-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Workflow</p>
+          <p className="mt-1 text-sm text-foreground">Flash routers, run aliases, inspect logs.</p>
+        </div>
       </div>
     </aside>
   );
