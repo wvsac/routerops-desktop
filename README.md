@@ -4,25 +4,46 @@ Premium Linux-focused QA utility built with **Tauri v2 + React + TypeScript + Vi
 
 Current workflow defaults are configured around **GL-AX1800** (`192.168.8.1`, `scp`, `sysupgrade -n`), with platform-tag-based artifact resolution and optional local image path flashing.
 
-## Run
+## Install from .deb (Ubuntu/Debian)
+
+Download the `.deb` from the latest GitHub Actions build artifact, then:
 
 ```bash
-cd /Users/wvsac/portfolio/routerops-desktop
+sudo dpkg -i routerops-control_*.deb
+sudo apt-get install -f   # resolve any missing dependencies
+```
+
+## Build from source
+
+### Prerequisites (Ubuntu/Debian)
+
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+  libwebkit2gtk-4.1-dev \
+  libgtk-3-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev \
+  patchelf
+```
+
+You also need [Node.js](https://nodejs.org/) (v20+) and [Rust](https://rustup.rs/).
+
+### Development
+
+```bash
 npm install
-npm run dev
-```
-
-Production frontend build:
-
-```bash
-npm run build
-```
-
-Tauri desktop shell (requires Rust + Tauri prerequisites installed):
-
-```bash
 npm run tauri dev
 ```
+
+### Production .deb bundle
+
+```bash
+npm install
+npx tauri build --bundles deb
+```
+
+The `.deb` file will be at `src-tauri/target/release/bundle/deb/`.
 
 ## Project structure
 

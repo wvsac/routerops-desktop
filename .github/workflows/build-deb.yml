@@ -25,6 +25,17 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Install Linux system dependencies
         run: |
           sudo apt-get update
@@ -39,7 +50,7 @@ jobs:
         run: npm ci
 
       - name: Build Tauri .deb bundle
-        run: npm run tauri build -- --bundles deb
+        run: npx tauri build --bundles deb
 
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
