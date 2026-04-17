@@ -6,7 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import type { AppSettings } from "@/domain/models";
 
-export function SettingsPage({ settings }: { settings: AppSettings }) {
+export function SettingsPage({
+  settings,
+  onUpdateSettings,
+}: {
+  settings: AppSettings;
+  onUpdateSettings: (partial: Partial<AppSettings>) => void;
+}) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -14,11 +20,21 @@ export function SettingsPage({ settings }: { settings: AppSettings }) {
       <Card className="glass">
         <CardHeader>
           <CardTitle>Configuration</CardTitle>
-          <CardDescription>Placeholder values for real command integrations.</CardDescription>
+          <CardDescription>Integration endpoints and default values.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Field label="S3 base URL" value={settings.s3BaseUrl} icon={Link2} />
-          <Field label="Default platform tag" value={settings.defaultPlatformTag} icon={Link2} />
+          <Field
+            label="S3 base URL"
+            value={settings.s3BaseUrl}
+            icon={Link2}
+            onChange={(value) => onUpdateSettings({ s3BaseUrl: value })}
+          />
+          <Field
+            label="Default platform tag"
+            value={settings.defaultPlatformTag}
+            icon={Link2}
+            onChange={(value) => onUpdateSettings({ defaultPlatformTag: value })}
+          />
           <Field label="Flash worker backend" value="MockFlashService (replace with Tauri command bridge)" icon={Wrench} />
         </CardContent>
       </Card>
@@ -69,13 +85,28 @@ export function SettingsPage({ settings }: { settings: AppSettings }) {
   );
 }
 
-function Field({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Link2 }) {
+function Field({
+  label,
+  value,
+  icon: Icon,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  icon: typeof Link2;
+  onChange?: (value: string) => void;
+}) {
   return (
     <div className="space-y-1.5">
       <label className="text-xs text-muted-foreground">{label}</label>
       <div className="relative">
         <Icon className="pointer-events-none absolute top-2.5 left-2.5 size-3.5 text-muted-foreground" />
-        <Input value={value} readOnly className="pl-8 font-mono text-xs" />
+        <Input
+          value={value}
+          readOnly={!onChange}
+          onChange={onChange ? (e) => onChange(e.target.value) : undefined}
+          className="pl-8 font-mono text-xs"
+        />
       </div>
     </div>
   );

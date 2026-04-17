@@ -25,7 +25,7 @@ const createPlanInput = (
 ): FlashRequestInput => ({ firmwareHash, platformId, imageSource, localImagePath });
 
 export function useRouterOpsState() {
-  const [settings] = useState<AppSettings>(mockSettings);
+  const [settings, setSettings] = useState<AppSettings>(mockSettings);
   const [platforms] = useState<RouterPlatform[]>(mockPlatforms);
   const [jobs, setJobs] = useState<FlashJob[]>(mockJobs);
   const [aliases, setAliases] = useState<AliasCommand[]>(mockAliases);
@@ -119,6 +119,11 @@ export function useRouterOpsState() {
     toast.success("Alias updated");
   };
 
+  const deleteAlias = (aliasId: string) => {
+    setAliases((prev) => prev.filter((alias) => alias.id !== aliasId));
+    toast.success("Alias deleted");
+  };
+
   const runAlias = async (alias: AliasCommand) => {
     setAliasBusyId(alias.id);
     try {
@@ -188,6 +193,16 @@ export function useRouterOpsState() {
     }
   };
 
+  const updateSettings = (partial: Partial<AppSettings>) => {
+    setSettings((prev) => ({ ...prev, ...partial }));
+    toast.success("Settings updated");
+  };
+
+  const clearCompletedJobs = () => {
+    setJobs((prev) => prev.filter((job) => job.status === "running" || job.status === "queued"));
+    toast.success("Completed jobs cleared");
+  };
+
   return {
     settings,
     platforms,
@@ -203,8 +218,11 @@ export function useRouterOpsState() {
     createAlias,
     importAliases,
     updateAlias,
+    deleteAlias,
     runAlias,
     deployAliasesToRouter,
+    updateSettings,
+    clearCompletedJobs,
     getJobLogs: (jobId: string) => jobLogService.getByJobId(jobId),
   };
 }

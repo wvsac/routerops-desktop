@@ -229,7 +229,7 @@ export const mockJobs: FlashJob[] = [
     createdAt: minutesAgo(215),
     platformId: "technicolor-xb8",
     firmwareHash: "5f8dc11",
-    imageUrl: "/Users/wvsac/firmware/technicolor_xb8-sysupgrade.bin",
+    imageUrl: "/home/user/firmware/technicolor_xb8-sysupgrade.bin",
     status: "failed",
     progress: 74,
     plan: buildFlashPlan(
@@ -237,7 +237,7 @@ export const mockJobs: FlashJob[] = [
       "5f8dc11",
       mockSettings.s3BaseUrl,
       "local",
-      "/Users/wvsac/firmware/technicolor_xb8-sysupgrade.bin",
+      "/home/user/firmware/technicolor_xb8-sysupgrade.bin",
     ),
     resultSummary: "Device did not come back after update window.",
   },

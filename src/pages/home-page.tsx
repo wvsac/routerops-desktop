@@ -1,9 +1,9 @@
-import { Command, FileClock, Radio, Router, Settings } from "lucide-react";
+import { Activity, Command, FileClock, Radio, Router, Settings } from "lucide-react";
 
 import { StatusPill } from "@/components/app/status-pill";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AliasCommand, FlashJob, RouterPlatform } from "@/domain/models";
+import type { AliasCommand, DeviceActivity, FlashJob, RouterPlatform } from "@/domain/models";
 import { formatRelative } from "@/lib/format";
 import type { AppSection } from "@/app/sections";
 
@@ -11,11 +11,13 @@ export function HomePage({
   platforms,
   aliases,
   latestJob,
+  activity,
   onNavigate,
 }: {
   platforms: RouterPlatform[];
   aliases: AliasCommand[];
   latestJob?: FlashJob;
+  activity: DeviceActivity[];
   onNavigate: (section: AppSection) => void;
 }) {
   return (
@@ -103,6 +105,31 @@ export function HomePage({
           </CardContent>
         </Card>
       </div>
+
+      {activity.length > 0 && (
+        <Card className="glass">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="size-4" />
+              Recent activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {activity.slice(0, 5).map((entry) => (
+              <div key={entry.id} className="flex items-start gap-3 rounded-lg border border-border/70 bg-muted/20 p-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-medium">{entry.action}</p>
+                    <span className="shrink-0 font-mono text-xs text-muted-foreground">{entry.platformId}</span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{entry.detail}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{formatRelative(entry.timestamp)}</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

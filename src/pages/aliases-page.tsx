@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Download, FileUp, Pencil, Play, Plus, Search } from "lucide-react";
+import { AlertTriangle, Download, FileUp, Pencil, Play, Plus, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
@@ -41,6 +41,7 @@ export function AliasesPage({
   onCreateAlias,
   onImportAliases,
   onUpdateAlias,
+  onDeleteAlias,
   onRunAlias,
   onDeployAliases,
 }: {
@@ -51,6 +52,7 @@ export function AliasesPage({
   onCreateAlias: (alias: Omit<AliasCommand, "id">) => void;
   onImportAliases: (aliases: Array<Omit<AliasCommand, "id">>) => void;
   onUpdateAlias: (aliasId: string, partial: Partial<AliasCommand>) => void;
+  onDeleteAlias: (aliasId: string) => void;
   onRunAlias: (alias: AliasCommand) => Promise<void>;
   onDeployAliases: (platformTag: string, aliasIds: string[]) => Promise<void>;
 }) {
@@ -268,6 +270,10 @@ export function AliasesPage({
                     <Button variant="ghost" size="sm" onClick={() => openEdit(alias)}>
                       <Pencil className="size-3.5" />
                       Edit
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => onDeleteAlias(alias.id)}>
+                      <Trash2 className="size-3.5" />
+                      Delete
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => void runAlias(alias)} disabled={busyAliasId === alias.id}>
                       <Play className="size-3.5" />

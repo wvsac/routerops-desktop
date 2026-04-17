@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { CopyButton } from "@/components/app/copy-button";
@@ -16,9 +17,11 @@ const filters: Array<FlashJob["status"] | "all"> = ["all", "running", "success",
 export function JobsPage({
   jobs,
   logs,
+  onClearCompleted,
 }: {
   jobs: FlashJob[];
   logs: JobLogEntry[];
+  onClearCompleted: () => void;
 }) {
   const [filter, setFilter] = useState<(typeof filters)[number]>("all");
   const [selectedJobId, setSelectedJobId] = useState(jobs[0]?.id ?? "");
@@ -37,8 +40,21 @@ export function JobsPage({
     <div className="grid gap-4 2xl:grid-cols-[0.9fr_1.1fr]">
       <Card className="glass">
         <CardHeader>
-          <CardTitle>Job list</CardTitle>
-          <CardDescription>Filter by status and inspect run metadata.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Job list</CardTitle>
+              <CardDescription>Filter by status and inspect run metadata.</CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onClearCompleted}
+              disabled={!jobs.some((job) => job.status !== "running" && job.status !== "queued")}
+            >
+              <Trash2 className="size-3.5" />
+              Clear completed
+            </Button>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {filters.map((entry) => (
               <Button

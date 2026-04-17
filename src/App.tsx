@@ -57,6 +57,7 @@ function RouterOpsApp() {
             platforms={state.platforms}
             aliases={state.aliases}
             latestJob={latestJob}
+            activity={state.activity}
             onNavigate={setSection}
           />
         );
@@ -81,6 +82,7 @@ function RouterOpsApp() {
             onCreateAlias={state.createAlias}
             onImportAliases={state.importAliases}
             onUpdateAlias={state.updateAlias}
+            onDeleteAlias={state.deleteAlias}
             onRunAlias={state.runAlias}
             onDeployAliases={state.deployAliasesToRouter}
           />
@@ -88,9 +90,9 @@ function RouterOpsApp() {
       case "platforms":
         return <PlatformsPage platforms={state.platforms} />;
       case "jobs":
-        return <JobsPage jobs={state.jobs} logs={state.logs} />;
+        return <JobsPage jobs={state.jobs} logs={state.logs} onClearCompleted={state.clearCompletedJobs} />;
       case "settings":
-        return <SettingsPage settings={state.settings} />;
+        return <SettingsPage settings={state.settings} onUpdateSettings={state.updateSettings} />;
       default:
         return null;
     }

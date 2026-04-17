@@ -161,7 +161,7 @@ export function FlashRouterPage({
                 <label className="text-xs text-muted-foreground">Local image path</label>
                 <div className="flex items-center gap-2">
                   <Input
-                    placeholder="/Users/you/firmware/glinet_gl-ax1800-squashfs-sysupgrade.bin"
+                    placeholder="/home/user/firmware/glinet_gl-ax1800-squashfs-sysupgrade.bin"
                     {...form.register("localImagePath")}
                   />
                   <Button type="button" variant="outline" onClick={() => void pickLocalImage()} disabled={!isTauri()}>

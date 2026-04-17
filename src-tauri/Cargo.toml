@@ -1,7 +1,7 @@
 [package]
 name = "routerops-desktop"
 version = "0.1.0"
-description = "A Tauri App"
+description = "RouterOps router management and configuration tool"
 authors = ["you"]
 edition = "2021"
 

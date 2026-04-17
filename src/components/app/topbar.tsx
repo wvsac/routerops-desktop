@@ -1,8 +1,12 @@
-import { MoonStar, Sun, TerminalSquare } from "lucide-react";
+import { Monitor, MoonStar, Sun, TerminalSquare } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { sectionMeta, type AppSection } from "@/app/sections";
 import { Button } from "@/components/ui/button";
+
+const isMac = navigator.userAgent.includes("Mac");
+const themeOrder = ["dark", "light", "system"] as const;
+const themeIcon = { dark: Sun, light: MoonStar, system: Monitor } as const;
 
 export function Topbar({
   section,
@@ -14,6 +18,12 @@ export function Topbar({
   const { theme, setTheme } = useTheme();
   const current = sectionMeta[section];
   const Icon = current.icon;
+
+  const nextTheme = () => {
+    const idx = themeOrder.indexOf(theme as (typeof themeOrder)[number]);
+    setTheme(themeOrder[(idx + 1) % themeOrder.length]);
+  };
+  const ThemeIcon = themeIcon[(theme as keyof typeof themeIcon) ?? "dark"];
 
   return (
     <header className="glass flex h-16 items-center justify-between rounded-2xl px-4">
@@ -30,15 +40,15 @@ export function Topbar({
         <Button variant="outline" size="sm" onClick={onPalette}>
           <TerminalSquare className="size-3.5" />
           <span className="hidden md:inline">Command palette</span>
-          <span className="font-mono text-xs text-muted-foreground">⌘K</span>
+          <span className="font-mono text-xs text-muted-foreground">{isMac ? "⌘K" : "Ctrl+K"}</span>
         </Button>
         <Button
           variant="outline"
           size="icon-sm"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={nextTheme}
           aria-label="Toggle theme"
         >
-          {theme === "dark" ? <Sun className="size-3.5" /> : <MoonStar className="size-3.5" />}
+          <ThemeIcon className="size-3.5" />
         </Button>
       </div>
     </header>
